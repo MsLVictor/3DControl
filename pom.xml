@@ -18,10 +18,12 @@
     <description>Sistema de Controle de Vendas 3D Control - microsserviços</description>
 
     <modules>
-		<module>services/cadastro-service</module>
-		<module>services/pedido-service</module>
-		<module>api-gateway</module>
-	</modules>
+        <module>services/cadastro-service</module>
+        <module>services/pedido-service</module>
+        <module>services/producao-service</module>
+        <module>services/financeiro-service</module>
+        <module>api-gateway</module>
+    </modules>
 
     <properties>
         <java.version>21</java.version>
