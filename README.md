@@ -119,7 +119,7 @@ Dentro de cada serviço, o código é agrupado **por funcionalidade de negócio*
 - **Caminho natural para extração:** se uma feature crescer, ela já é uma unidade isolada e pode virar um
   novo microsserviço.
 
-### 2.3 Camadas simples dentro de cada feature (sem Arquitetura Limpa)
+### 2.3 Camadas simples dentro de cada feature
 
 Cada feature segue a divisão mais comum em projetos Spring:
 
@@ -137,33 +137,6 @@ Cada feature segue a divisão mais comum em projetos Spring:
 | `XxxRepository` | Interface Spring Data JPA, sem implementação manual | `PedidoRepository` |
 | Entidade (`@Entity`) | Mapeamento da tabela **e** as regras de negócio da própria entidade | `Pedido`, `ContaReceber` |
 | `XxxClient` | Cliente HTTP (`RestClient`) para outro microsserviço | `EstoqueClient` |
-
-**Por que esta divisão (e não a Arquitetura Limpa):**
-
-- **Simplicidade.** É o padrão que qualquer desenvolvedor Spring reconhece de imediato. Cada conceito
-  tem **uma** classe: não existem entidade de domínio e entidade JPA separadas, portas, adaptadores nem
-  conversões `from()`/`toDomain()`. Em relação à versão com Arquitetura Limpa, o código principal ficou
-  com cerca de **20% menos arquivos e linhas** (91 arquivos Java contra 116), com o mesmo comportamento
-  e a mesma API.
-- **As regras continuam protegidas.** A Regra de Ouro, a liberação da entrega e a reserva de insumos
-  ficam nos métodos das entidades (`Pedido.alterar()`, `Pedido.confirmarEntrega()`,
-  `ItemEstoque.reservar()`). As entidades não têm *setters*: o estado só muda por esses métodos, que
-  validam tudo. O JPA grava os campos por reflexão, e o construtor sem argumentos que ele exige é
-  `protected`.
-- **Continua testável sem Spring.** Criada com `new`, uma entidade JPA é uma classe Java comum. Os testes
-  unitários instanciam `Pedido`, `ContaReceber` etc. diretamente, **sem subir Spring nem banco**.
-- **Menos código de integração.** Os services chamam os clientes HTTP diretamente (`EstoqueClient`,
-  `FinanceiroClient`), sem interfaces intermediárias.
-
-**Do que se abre mão** (as vantagens da Arquitetura Limpa):
-
-- As entidades **dependem do JPA** (anotações `@Entity`, `@Column`…). Trocar a tecnologia de
-  persistência atinge as classes que guardam as regras de negócio.
-- Os services **dependem dos clientes HTTP concretos**. Trocar REST por mensageria exige alterar o
-  service, e não apenas escrever um novo adaptador.
-
-Para um sistema deste tamanho, com uma única tecnologia de persistência e integração por REST, esse custo
-é baixo e o ganho em clareza compensa.
 
 ### 2.4 Decisões complementares
 
